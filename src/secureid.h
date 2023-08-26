@@ -41,29 +41,81 @@ extern Authority ResourceManager;
 extern Authority MandatoryLevel;
 
 struct SID_IDENTIFIER_AUTHORITY {
+    /**
+    * Stores authority;
+    */
     uint8_t Value[6];
 };
 
 struct SID {
+    /**
+    * The revesion mostly 1
+    */
     uint8_t                         Revesion;
+    /**
+    * The count of subauthority
+    */
     uint8_t                         SubAuthorityCount;
+    /**
+    * The authority type
+    */
     struct SID_IDENTIFIER_AUTHORITY IdentifierAuthority;
+    /**
+    * The SubAuthority identifier value
+    * Waring the real size is subauthoritycount
+    */
     uint32_t                        SubAuthority[1];
 };
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+    /**
+    * With this function will be the memory allocated for SID struct and set as NULL Authority
+    * Don't do that by malloc,calloc or new its a 32bit pointer !!
+    * @param sid that will be initalized
+    **/
     void initSID(struct SID **sid);
+
+    /**
+    * With this function will be the memory dellocated for SID struct
+    * Don't do that with free or delete its a 32bit pointer !!
+    * @param sid that will be dellocated
+    **/
     void destroySID(struct SID *sid);
 
+    /**
+    * This function will copy from sid to another sid struct
+    * importend you initSID for dest before you copy !!
+    * @param dest copy destination
+    * @param src copy source
+    **/
     int  SIDcpy(struct SID *dest,struct SID *src);
 
+    /**
+    * This function will set your Authority for example NT look for Authority type.
+    * @param sid SID struct set will be the value set
+    * @param authority type of authority that genarated the Identifier
+    * @param uid the indentifier array that will you set
+    * @param count the indentifier array size
+    **/
     void setAuthority(struct SID *sid,Authority authority,uint32_t* uid,uint8_t count);
 
+    /**
+    * This function will be parse a sid cstring to struct sid
+    * @param sid SID struct set will be the destination for parsing
+    * @param input a cstring that included the secure indentfier
+    * @param size the length of the input
+    **/
     int parseSID(struct SID *sid,const char *input,int size);
 
-    int printSID(struct SID *sid,char *input,int size);
+    /**
+    * This function will be parse a sid cstring to struct sid
+    * @param sid SID struct set will be the source for printing
+    * @param output a cstring that included the secure indentfier
+    * @param size the maximum size that output can be carrier
+    **/
+    int printSID(struct SID *sid,char *output,int size);
 
 #ifdef __cplusplus
 };

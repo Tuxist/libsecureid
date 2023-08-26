@@ -197,43 +197,43 @@ int parseSID(struct SID *sid,const char *input,int size){
     return sid->SubAuthorityCount;
 };
 
-int printSID(struct SID *sid,char *input,int size){
+int printSID(struct SID *sid,char *output,int size){
     int written = 0;
-    input[written++]='S';
-    input[written++]='-';
-    input[written++]=sid->Revesion+'0';
-    input[written++]='-';
+    output[written++]='S';
+    output[written++]='-';
+    output[written++]=sid->Revesion+'0';
+    output[written++]='-';
 
     int i,z=0,ii;
 
     for(ii=0; ii<6; ++ii){
         if(sid->IdentifierAuthority.Value[ii]!=0){
-            input[written++]=sid->IdentifierAuthority.Value[ii]+'0';
+            output[written++]=sid->IdentifierAuthority.Value[ii]+'0';
             z=1;
         }
     }
 
     if(z==0)
-        input[written++]='0';
+        output[written++]='0';
 
-    input[written++]='-';
+    output[written++]='-';
 
     char ct[255];
     uint32_t ctt=uint32_t2string(sid->SubAuthorityCount,ct,10);
-    memcpy32(input+written,&ct,ctt);
+    memcpy32(output+written,&ct,ctt);
     written += ctt;
     if(sid->SubAuthorityCount!=0){
         for (int ii = 0; ii <  (sid->SubAuthorityCount/sizeof(uint32_t))-1; ++ii) {
             if(written>size)
                 break;
-            input[written++]='-';
+            output[written++]='-';
             char tmp[255];
             uint32_t wt=uint32_t2string(sid->SubAuthority[ii],tmp,10);
-            memcpy32(input+written,&tmp,wt);
+            memcpy32(output+written,&tmp,wt);
             written += wt;
         }
     }
-    input[written]='\0';
+    output[written]='\0';
     return written;
 };
 
