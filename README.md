@@ -3,18 +3,20 @@
 A small C library to Work with Microsofts Secure Identfier.
 
 ##Dependcies
-1. Linux
-2. GCC/Clang
-3. C99
-4. Cmake
+
+- Linux
+- GCC/Clang
+- C99
+- Cmake
 
 ##Build
-cd libsecureid
-mkdir build
-cd build
-cmake ../
-make || ninja
-make install || ninja install
+
+1. cd libsecureid
+2. mkdir build
+3. cd build
+4. cmake ../
+5. make || ninja
+6.  make install || ninja install
 
 ##Usage Example
 
