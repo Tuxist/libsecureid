@@ -167,13 +167,16 @@ int parseSID(struct SID *sid,const char *input,int size){
 
     int c =++i;
 
-    while(input[c++]!='-');
+    while( c< (size-i) && input[c++]!='-');
 
     c=c-i;
 
     sid->SubAuthorityCount=string2uint32_t(input+i,--c);
 
     i+=c;
+
+    if(sid->SubAuthorityCount==0)
+        return 0;
 
     sid->SubAuthority[1]=map32(sid->SubAuthorityCount/sizeof(uint32_t));
 
@@ -219,15 +222,16 @@ int printSID(struct SID *sid,char *input,int size){
     uint32_t ctt=uint32_t2string(sid->SubAuthorityCount,ct,10);
     memcpy32(input+written,&ct,ctt);
     written += ctt;
-
-    for (int ii = 0; ii <  (sid->SubAuthorityCount/sizeof(uint32_t))-1; ++ii) {
-        if(written>size)
-            break;
-        input[written++]='-';
-        char tmp[255];
-        uint32_t wt=uint32_t2string(sid->SubAuthority[ii],tmp,10);
-        memcpy32(input+written,&tmp,wt);
-        written += wt;
+    if(sid->SubAuthorityCount!=0){
+        for (int ii = 0; ii <  (sid->SubAuthorityCount/sizeof(uint32_t))-1; ++ii) {
+            if(written>size)
+                break;
+            input[written++]='-';
+            char tmp[255];
+            uint32_t wt=uint32_t2string(sid->SubAuthority[ii],tmp,10);
+            memcpy32(input+written,&tmp,wt);
+            written += wt;
+        }
     }
     input[written]='\0';
     return written;
