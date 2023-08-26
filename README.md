@@ -9,6 +9,9 @@ A small C library to Work with Microsofts Secure Identfier.
 - C99
 - Cmake
 
+###Opitional
+- Doxygen (for documentation)
+
 ##Build
 
 1. cd libsecureid
