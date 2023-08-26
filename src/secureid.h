@@ -40,6 +40,17 @@ extern Authority NT;
 extern Authority ResourceManager;
 extern Authority MandatoryLevel;
 
+/*! \file secureid.h
+    \brief A Documented file.
+
+    Details.
+*/
+
+
+/**
+* Secure Identfier authority
+*/
+
 struct SID_IDENTIFIER_AUTHORITY {
     /**
     * Stores authority;
@@ -47,6 +58,9 @@ struct SID_IDENTIFIER_AUTHORITY {
     uint8_t Value[6];
 };
 
+/**
+* Secure Identfier Data
+*/
 struct SID {
     /**
     * The revesion mostly 1
@@ -70,51 +84,57 @@ struct SID {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    /**
-    * With this function will be the memory allocated for SID struct and set as NULL Authority
-    * Don't do that by malloc,calloc or new its a 32bit pointer !!
-    * @param sid that will be initalized
-    **/
+    /*!
+      \fn initSID(struct SID **sid)
+      \brief With this function will be the memory allocated for SID struct and set as NULL Authority
+      \brief Don't do that by malloc,calloc or new its a 32bit pointer !!
+      \param sid that will be initalized
+    */
     void initSID(struct SID **sid);
 
-    /**
-    * With this function will be the memory dellocated for SID struct
-    * Don't do that with free or delete its a 32bit pointer !!
-    * @param sid that will be dellocated
-    **/
+    /*!
+      \fn void destroySID(struct SID *sid)
+      \brief With this function will be the memory dellocated for SID struct
+      \brief Don't do that with free or delete its a 32bit pointer !!
+      \param sid that will be dellocated
+    */
     void destroySID(struct SID *sid);
 
-    /**
-    * This function will copy from sid to another sid struct
-    * importend you initSID for dest before you copy !!
-    * @param dest copy destination
-    * @param src copy source
-    **/
+    /*!
+      \fn SIDcpy(struct SID *dest,struct SID *src)
+      \brief This function will copy from sid to another sid struct
+      \brief importend you initSID for dest before you copy !!
+      \param dest copy destination
+      \param src copy source
+    */
     int  SIDcpy(struct SID *dest,struct SID *src);
 
-    /**
-    * This function will set your Authority for example NT look for Authority type.
-    * @param sid SID struct set will be the value set
-    * @param authority type of authority that genarated the Identifier
-    * @param uid the indentifier array that will you set
-    * @param count the indentifier array size
-    **/
+    /*!
+      \fn setAuthority(struct SID *sid,Authority authority,uint32_t* uid,uint8_t count)
+      \brief This function will set your Authority for example NT look for Authority type.
+      \param sid SID struct set will be the value set
+      \param authority type of authority that genarated the Identifier
+      \param uid the indentifier array that will you set
+      \param count the indentifier array size
+    */
     void setAuthority(struct SID *sid,Authority authority,uint32_t* uid,uint8_t count);
 
-    /**
-    * This function will be parse a sid cstring to struct sid
-    * @param sid SID struct set will be the destination for parsing
-    * @param input a cstring that included the secure indentfier
-    * @param size the length of the input
-    **/
+    /*!
+      \fn int parseSID(struct SID *sid,const char *input,int size)
+      \brief This function will be parse a sid cstring to struct sid
+      \param sid SID struct set will be the destination for parsing
+      \param input a cstring that included the secure indentfier
+      \param size the length of the input
+    */
     int parseSID(struct SID *sid,const char *input,int size);
 
-    /**
-    * This function will be parse a sid cstring to struct sid
-    * @param sid SID struct set will be the source for printing
-    * @param output a cstring that included the secure indentfier
-    * @param size the maximum size that output can be carrier
-    **/
+    /*!
+      \fn int printSID(struct SID *sid,char *output,int size)
+      \brief This function will be parse a sid cstring to struct sid
+      \param sid SID struct set will be the source for printing
+      \param output a cstring they will be printed the secure indentfier
+      \param size the maximum size that output can be carrier
+    */
     int printSID(struct SID *sid,char *output,int size);
 
 #ifdef __cplusplus
