@@ -30,20 +30,60 @@
 
 #include "secureid.h"
 
-#define MYSID "S-1-5-21-3686201514-2077471124-1704617262-1104"
+#define _POSIX_C_SOURCE 200809L
 
 int main(int argc, char *argv[]){
-    struct SID *sid;
-    initSID(&sid);
-    parseSID(sid,MYSID,strlen(MYSID));
+    int read=0;
 
-    char test[512];
+    if(argc!=2){
+        printf("no file path argument append !");
+        return -1;
+    }
 
-    printSID(sid,test,512);
+    FILE *list;
+    list=fopen(argv[1],"r");
 
-    printf("%s\n",test);
+    if(list==0){
+        printf("cannot open file !");
+        return -1;
+    }
 
-    printf("%s\n",MYSID);
+    int failed=0;
 
-    destroySID(sid);
+    while(read==0){
+        char line[512],out[512];
+        int spos=0,written=0;;
+        for(spos=fgetc(list); spos!='\n'; spos=fgetc(list)){
+            if(written > 511){
+                printf("line too long aborting");
+                failed=-1;
+            }
+            if(feof(list)){
+                read=-1;
+                break;
+            }
+            line[written++]=spos;
+        }
+
+        if(written==0)
+            return 0;
+
+        line[written]='\0';
+
+        struct SID *sid;
+        initSID(&sid);
+
+        int ret=parseSID(sid,line,written);
+
+        if(ret!=-1)
+            printSID(sid,out,512);
+        destroySID(sid);
+        if(ret!=-1 && strcmp(line,out)==0){
+            printf("Success: %s \n",out);
+            continue;
+        }
+        printf("Failed: %s \n",line);
+        failed = -1;
+    }
+    return failed;
 }

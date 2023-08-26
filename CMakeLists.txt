@@ -1,5 +1,6 @@
-project(secureid C)
 cmake_minimum_required(VERSION 3.0)
+project(secureid C)
+enable_testing ()
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-int-conversion")
 

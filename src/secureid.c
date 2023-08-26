@@ -107,7 +107,8 @@ void initSID(struct SID **sid){
 };
 
 void destroySID(struct SID *sid){
-    munmap32(sid->SubAuthority[1],(sizeof(uint32_t)*sid->SubAuthorityCount));
+    if(sid->SubAuthorityCount!=0)
+        munmap32(sid->SubAuthority[1],(sizeof(uint32_t)*sid->SubAuthorityCount));
     munmap32(sid,sizeof(struct SID));
 };
 
@@ -186,19 +187,16 @@ int parseSID(struct SID *sid,const char *input,int size){
 
     for (iis= 0; iis < ssize - 1; ++iis) {
         ++i;
-        for(ia=1; input[i+ia]!='-'; ++ia){
-            if(i+ia==size)
-                break;
-        }
+        for(ia=0; i+ia<size && input[i+ia]!='-'; ++ia);
         sid->SubAuthority[iis]=string2uint32_t(input+i,ia);
         i+=ia;
     }
-    return 0;
+    return sid->SubAuthorityCount;
 };
 
 int printSID(struct SID *sid,char *input,int size){
     int written = 0;
-    input[written++]="S";
+    input[written++]='S';
     input[written++]='-';
     input[written++]=sid->Revesion+'0';
     input[written++]='-';
@@ -223,6 +221,8 @@ int printSID(struct SID *sid,char *input,int size){
     written += ctt;
 
     for (int ii = 0; ii <  (sid->SubAuthorityCount/sizeof(uint32_t))-1; ++ii) {
+        if(written>size)
+            break;
         input[written++]='-';
         char tmp[255];
         uint32_t wt=uint32_t2string(sid->SubAuthority[ii],tmp,10);
