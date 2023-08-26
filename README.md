@@ -18,8 +18,7 @@ make install | ninja install
 (___)
 ##Usage Example
 
-`(inline code)`{:.language-c .highlihgt}
-`Use`
+`(inline code)`{:.language-c .highlihgt {
 #include "secureid.h"
 
 #define MYSID "S-1-5-21-3686201514-2077471124-1704617262-1104"
@@ -39,4 +38,4 @@ int main(int argc, char *argv[]){
 
     destroySID(sid);
 }
-``
+}
