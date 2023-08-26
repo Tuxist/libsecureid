@@ -9,7 +9,7 @@ A small C library to Work with Microsofts Secure Identfier.
 - C99
 - Cmake
 
-###Opitional
+###Optional
 - Doxygen (for documentation)
 
 ##Build
