@@ -2,17 +2,17 @@
 
 A small C library to Work with Microsofts Secure Identfier.
 
-##Dependcies
+## Dependcies
 
 - Linux
 - GCC/Clang
 - C99
 - Cmake
 
-###Optional
+### Optional
 - Doxygen (for documentation)
 
-##Build
+## Build
 
 1. cd libsecureid
 2. mkdir build
@@ -21,7 +21,7 @@ A small C library to Work with Microsofts Secure Identfier.
 5. make || ninja
 6.  make install || ninja install
 
-##Usage Example
+## Usage Example
 
 ```C
 
@@ -45,4 +45,9 @@ int main(int argc, char *argv[]){
     destroySID(sid);
 }
 
+```
+
+## Build example
+´´´Bash
+gcc parse.c -o parse -lsecureid 
 ```
