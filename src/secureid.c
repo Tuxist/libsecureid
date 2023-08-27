@@ -119,9 +119,9 @@ int SIDcpy(struct SID *dest,struct SID *src){
 
     int written=0;
 
-    for (int ii = 0; ii < (int)src->SubAuthorityCount - 1; ++ii) {
-        memcpy32(dest->SubAuthority+(src->SubAuthorityCount * sizeof(uint32_t)),
-                                      src->SubAuthority[1]+(src->SubAuthorityCount * sizeof(uint32_t)),
+    for (int ii = 0; ii < src->SubAuthorityCount/sizeof(uint32_t)-1; ++ii) {
+        memcpy32(dest->SubAuthority[ii]+(src->SubAuthorityCount * sizeof(uint32_t)),
+                                      src->SubAuthority[ii]+(src->SubAuthorityCount * sizeof(uint32_t)),
                                       sizeof(uint32_t)
                                     );
         written+=sizeof(uint32_t);
