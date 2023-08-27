@@ -115,16 +115,14 @@ void destroySID(struct SID *sid){
 int SIDcpy(struct SID *dest,struct SID *src){
     memcpy32(dest,src,sizeof(struct SID));
 
-    dest->SubAuthority[1]=map32(sizeof(uint32_t)*src->SubAuthorityCount);
-
     int written=0;
 
-    for (int ii = 0; ii < src->SubAuthorityCount/sizeof(uint32_t)-1; ++ii) {
-        memcpy32(dest->SubAuthority[ii]+(src->SubAuthorityCount * sizeof(uint32_t)),
-                                      src->SubAuthority[ii]+(src->SubAuthorityCount * sizeof(uint32_t)),
-                                      sizeof(uint32_t)
-                                    );
-        written+=sizeof(uint32_t);
+    int ssize=src->SubAuthorityCount/sizeof(uint32_t);
+
+    dest->SubAuthority[1]=map32(ssize);
+
+    for(int i=0; i<(ssize-1); ++i){
+        dest->SubAuthority[i]=src->SubAuthority[i];
     }
 
     return written+sizeof(struct SID);
