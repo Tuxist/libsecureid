@@ -102,7 +102,7 @@ __attribute__((visibility("hidden"))) int uint32_t2string(uint32_t num,char* str
 void initSID(struct SID **sid){
     *sid=map32(sizeof(struct SID));
     (*sid)->Revesion=1;
-    (*sid)->SubAuthorityCount=0;
+    (*sid)->SubAuthorityCount=1;
     setAuthority(*sid,NullAccount,0,0);
 };
 
@@ -117,11 +117,9 @@ int SIDcpy(struct SID *dest,struct SID *src){
 
     int written=0;
 
-    int ssize=src->SubAuthorityCount/sizeof(uint32_t);
+    dest->SubAuthority[1]=map32(src->SubAuthorityCount*sizeof(uint32_t));
 
-    dest->SubAuthority[1]=map32(ssize);
-
-    for(int i=0; i<(ssize-1); ++i){
+    for(int i=0; i<src->SubAuthorityCount; ++i){
         dest->SubAuthority[i]=src->SubAuthority[i];
     }
 
@@ -163,30 +161,26 @@ int parseSID(struct SID *sid,const char *input,int size){
         sid->IdentifierAuthority.Value[--e]=input[--ii]-'0';
     }
 
-    int c =++i;
+    int c =i;
 
-    while( c< (size-i) && input[c++]!='-');
-
-    c=c-i;
-
-    sid->SubAuthorityCount=string2uint32_t(input+i,--c);
-
-    i+=c;
+    while( c< size){
+        if(input[c++]=='-')
+            ++sid->SubAuthorityCount;
+    }
 
     if(sid->SubAuthorityCount==0)
         return 0;
 
-    sid->SubAuthority[1]=map32(sid->SubAuthorityCount/sizeof(uint32_t));
+    sid->SubAuthority[1]=map32(sid->SubAuthorityCount*sizeof(uint32_t));
 
-    int iis,ia,ssize;
+    int iis,ia;
 
-    ssize=sid->SubAuthorityCount/sizeof(uint32_t);
 
-    for (iis= 0; iis < ssize - 1; ++iis){
+    for (iis= 0; iis < sid->SubAuthorityCount; ++iis){
         sid->SubAuthority[iis]=0;
     }
 
-    for (iis= 0; iis < ssize - 1; ++iis) {
+    for (iis= 0; iis < sid->SubAuthorityCount; ++iis) {
         ++i;
         for(ia=0; i+ia<size && input[i+ia]!='-'; ++ia);
         sid->SubAuthority[iis]=string2uint32_t(input+i,ia);
@@ -214,22 +208,14 @@ int printSID(struct SID *sid,char *output,int size){
     if(z==0)
         output[written++]='0';
 
-    output[written++]='-';
-
-    char ct[255];
-    uint32_t ctt=uint32_t2string(sid->SubAuthorityCount,ct,10);
-    memcpy32(output+written,&ct,ctt);
-    written += ctt;
-    if(sid->SubAuthorityCount!=0){
-        for (int ii = 0; ii <  (sid->SubAuthorityCount/sizeof(uint32_t))-1; ++ii) {
-            if(written>size)
-                break;
-            output[written++]='-';
-            char tmp[255];
-            uint32_t wt=uint32_t2string(sid->SubAuthority[ii],tmp,10);
-            memcpy32(output+written,&tmp,wt);
-            written += wt;
-        }
+    for (int ii = 0; ii <  sid->SubAuthorityCount; ++ii) {
+        if(written>size)
+            break;
+        output[written++]='-';
+        char tmp[255];
+        uint32_t wt=uint32_t2string(sid->SubAuthority[ii],tmp,10);
+        memcpy32(output+written,&tmp,wt);
+        written += wt;
     }
     output[written]='\0';
     return written;
