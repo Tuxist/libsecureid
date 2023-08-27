@@ -48,6 +48,6 @@ int main(int argc, char *argv[]){
 ```
 
 ## Build example
-´´´Bash
+```SH
 gcc parse.c -o parse -lsecureid 
 ```
