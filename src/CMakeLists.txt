@@ -2,7 +2,6 @@ list(APPEND secureidsrc
     secureid.c
 )
 
-
 add_library(secureid STATIC ${secureidsrc})
 
 install( TARGETS
