@@ -137,6 +137,31 @@ extern "C" {
     */
     int printSID(struct SID *sid,char *output,int size);
 
+     /*!
+      \fn void generateDomainIdentfier(uint32_t *output,int count)
+      \brief This function will genarated domain indentfier numbers
+      \param output a uint32_t array that included the unique number
+      \param count the max size of output
+    */
+    void generateDomainIdentfier(uint32_t *output,int count);
+
+
+    /*!
+      \fn void setRid(struct SID *sid,uint32_t rid)
+      \brief This function will set the real id of a user without domain indentfier
+      \param sid SID struct set will be set the real id
+      \param rid the real id number the will be set
+    */
+    void setRid(struct SID *sid,uint32_t rid);
+
+    /*!
+      \fn int getRid(struct SID *sid)
+      \brief This function will get the real id of a user without domain indentfier
+      \param sid SID struct set will be set the real id
+    */
+    int  getRid(struct SID *sid);
+
+
 #ifdef __cplusplus
 };
 #endif

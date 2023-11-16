@@ -73,8 +73,10 @@ int main(int argc, char *argv[]){
 
         int ret=parseSID(sid,line,written);
 
-        if(ret>=0)
+        if(ret>=0){
             printSID(sid,out,512);
+
+        }
         destroySID(sid);
         if(ret>=0 && strcmp(line,out)==0){
             printf("Success: %s \n",out);

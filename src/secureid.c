@@ -221,4 +221,15 @@ int printSID(struct SID *sid,char *output,int size){
     return written;
 };
 
+void generateDomainIdentfier(uint32_t* output, int count){
+
+}
+
+void setRid(struct SID* sid, uint32_t rid){
+    sid->SubAuthority[sid->SubAuthorityCount-1]=rid;
+}
+
+int getRid(struct SID* sid){
+    return sid->SubAuthority[sid->SubAuthorityCount-1];
+}
 
