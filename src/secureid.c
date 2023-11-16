@@ -229,7 +229,7 @@ void setRid(struct SID* sid, uint32_t rid){
     sid->SubAuthority[sid->SubAuthorityCount-1]=rid;
 }
 
-int getRid(struct SID* sid){
+uint32_t getRid(struct SID* sid){
     return sid->SubAuthority[sid->SubAuthorityCount-1];
 }
 

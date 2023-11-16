@@ -159,7 +159,7 @@ extern "C" {
       \brief This function will get the real id of a user without domain indentfier
       \param sid SID struct set will be set the real id
     */
-    int  getRid(struct SID *sid);
+    uint32_t getRid(struct SID *sid);
 
 
 #ifdef __cplusplus
