@@ -25,6 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
 
+#include "stdio.h"
+
 #include "sys/mman.h"
 
 #include "secureid.h"
@@ -103,7 +105,8 @@ void initSID(struct SID **sid){
     *sid=map32(sizeof(struct SID));
     (*sid)->Revesion=1;
     (*sid)->SubAuthorityCount=1;
-    setAuthority(*sid,NullAccount,0,0);
+    setAuthority(*sid,NullAccount);
+    setSubAuthority(*sid,0,0);
 };
 
 void destroySID(struct SID *sid){
@@ -126,7 +129,15 @@ int SIDcpy(struct SID *dest,struct SID *src){
     return written+sizeof(struct SID);
 };
 
-void setAuthority(struct SID *sid,Authority authority,uint32_t* uid,uint8_t count){
+void setAuthority(struct SID *sid,Authority authority){
+    int i;
+
+    for(i=0; i<6; ++i){
+        sid->IdentifierAuthority.Value[i]=authority[i];
+    }
+}
+
+void setSubAuthority(struct SID *sid,uint32_t* uid,uint8_t count){
     if(sid->SubAuthorityCount!=0){
         munmap(sid->SubAuthority[1],(sizeof(uint32_t)*sid->SubAuthorityCount));
     }
@@ -134,12 +145,6 @@ void setAuthority(struct SID *sid,Authority authority,uint32_t* uid,uint8_t coun
     sid->SubAuthority[1]=map32(sizeof(uint32_t)*count);
 
     memcpy32(sid->SubAuthority[1],uid, (count * sizeof(uint32_t)));
-
-    int i;
-
-    for(i=0; i<6; ++i){
-        sid->IdentifierAuthority.Value[i]=authority[i];
-    }
 
     sid->SubAuthorityCount=count;
 }
@@ -223,6 +228,20 @@ int printSID(struct SID *sid,char *output,int size){
 
 void generateDomainIdentfier(uint32_t* output, int count){
 
+    //the last place will be used for the real user id
+    --count;
+
+    FILE *devrandom;
+
+    devrandom = fopen("/dev/random","ro");
+
+    for(int i=0; i<count; ++i){
+        for(char ii=0; ii<sizeof(uint32_t); ++ii){
+            output[i]= output[i] | getc(devrandom);
+        }
+    }
+
+    fclose(devrandom);
 }
 
 void setRid(struct SID* sid, uint32_t rid){

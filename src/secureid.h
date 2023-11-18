@@ -110,14 +110,21 @@ extern "C" {
     int  SIDcpy(struct SID *dest,struct SID *src);
 
     /*!
-      \fn setAuthority(struct SID *sid,Authority authority,uint32_t* uid,uint8_t count)
+      \fn setAuthority(struct SID *sid,Authority authority)
       \brief This function will set your Authority for example NT look for Authority type.
       \param sid SID struct set will be the value set
       \param authority type of authority that genarated the Identifier
+    */
+    void setAuthority(struct SID *sid,Authority authority);
+
+     /*!
+      \fn setSubAuthority(struct SID *sid,uint32_t* uid,uint8_t count)
+      \brief This function will set your SubAuthority.
+      \param sid SID struct set will be the value set
       \param uid the indentifier array that will you set
       \param count the indentifier array size
     */
-    void setAuthority(struct SID *sid,Authority authority,uint32_t* uid,uint8_t count);
+    void setSubAuthority(struct SID *sid,uint32_t* uid,uint8_t count);
 
     /*!
       \fn int parseSID(struct SID *sid,const char *input,int size)

@@ -12,3 +12,8 @@ add_executable(rid rid.c)
 target_link_libraries(rid secureid)
 
 add_test(NAME rid COMMAND $<TARGET_FILE:rid> "${CMAKE_SOURCE_DIR}/test/sid.txt")
+
+add_executable(gendomain gendomain.c)
+target_link_libraries(gendomain secureid)
+
+add_test(NAME gendomain COMMAND $<TARGET_FILE:gendomain>)
