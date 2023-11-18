@@ -25,6 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
 
+#include "assert.h"
 #include "stdio.h"
 
 #include "sys/mman.h"
@@ -106,7 +107,7 @@ void initSID(struct SID **sid){
     (*sid)->Revesion=1;
     (*sid)->SubAuthorityCount=1;
     setAuthority(*sid,NullAccount);
-    setSubAuthority(*sid,0,0);
+    setSubAuthority(*sid,0);
 };
 
 void destroySID(struct SID *sid){
@@ -137,16 +138,22 @@ void setAuthority(struct SID *sid,Authority authority){
     }
 }
 
-void setSubAuthority(struct SID *sid,uint32_t* uid,uint8_t count){
+void setSubAuthority(struct SID *sid,uint32_t uid){
+    sid->SubAuthority[0]=uid;
+}
+
+void setDomainIndentfier(struct SID *sid,uint32_t* did,uint8_t count){
     if(sid->SubAuthorityCount!=0){
         munmap(sid->SubAuthority[1],(sizeof(uint32_t)*sid->SubAuthorityCount));
     }
 
-    sid->SubAuthority[1]=map32(sizeof(uint32_t)*count);
-
-    memcpy32(sid->SubAuthority[1],uid, (count * sizeof(uint32_t)));
-
-    sid->SubAuthorityCount=count;
+    if(sid->SubAuthority[0]==21){
+        sid->SubAuthority[1]=map32(sizeof(uint32_t)*count);
+        memcpy32(sid->SubAuthority[1],did, (count * sizeof(uint32_t)));
+        sid->SubAuthorityCount=count;
+    }else{
+        assert("only SubAuthority with value 21 supports domain indentfier !");
+    }
 }
 
 int parseSID(struct SID *sid,const char *input,int size){
@@ -228,16 +235,13 @@ int printSID(struct SID *sid,char *output,int size){
 
 void generateDomainIdentfier(uint32_t* output, int count){
 
-    //the last place will be used for the real user id
-    --count;
-
     FILE *devrandom;
 
-    devrandom = fopen("/dev/random","ro");
+    devrandom = fopen("/dev/random","r");
 
     for(int i=0; i<count; ++i){
-        for(char ii=0; ii<sizeof(uint32_t); ++ii){
-            output[i]= output[i] | getc(devrandom);
+        for(char ii=0; ii<sizeof(uint32_t); ii=ii+sizeof(char)){
+            output[i] |= getc(devrandom);
         }
     }
 

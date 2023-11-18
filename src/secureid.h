@@ -118,13 +118,23 @@ extern "C" {
     void setAuthority(struct SID *sid,Authority authority);
 
      /*!
-      \fn setSubAuthority(struct SID *sid,uint32_t* uid,uint8_t count)
+      \fn setDomainIndentfier(struct SID *sid,uint32_t* did,uint8_t count)
+      \brief This function will set your DomainIndentfier.
+      \param sid SID struct set will be the value set
+      \param did the indentifier of your domain
+      \param count the indentifier array size
+    */
+
+    void setDomainIndentfier(struct SID *sid,uint32_t* did,uint8_t count);
+
+
+    /*!
+      \fn setSubAuthority(struct SID *sid,uint32_t)
       \brief This function will set your SubAuthority.
       \param sid SID struct set will be the value set
       \param uid the indentifier array that will you set
-      \param count the indentifier array size
     */
-    void setSubAuthority(struct SID *sid,uint32_t* uid,uint8_t count);
+    void setSubAuthority(struct SID *sid,uint32_t uid);
 
     /*!
       \fn int parseSID(struct SID *sid,const char *input,int size)

@@ -35,20 +35,21 @@ int main(int argc, char *argv[]){
     struct SID *sid;
     initSID(&sid);
 
-    uint32_t ident[4];
+    uint32_t ident[3];
 
     setAuthority(sid,NT);
 
-    generateDomainIdentfier(ident,4);
+    setSubAuthority(sid,21);
+
+    generateDomainIdentfier(ident,3);
+    setDomainIndentfier(sid,ident,3);
 
     setRid(sid,1001);
-
-    setSubAuthority(sid,ident,4);
 
     printSID(sid,sidc,512);
     destroySID(sid);
 
-    printf("%s",sidc);
+    printf("%s \n",sidc);
 
     return 0;
 }
