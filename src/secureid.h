@@ -155,12 +155,12 @@ extern "C" {
     int printSID(struct SID *sid,char *output,int size);
 
      /*!
-      \fn void generateDomainIdentfier(uint32_t *output,int count)
+      \fn void generateDomainIdentfier(struct SID *sid,int count)
       \brief This function will genarated domain indentfier numbers
-      \param output a uint32_t array that included the unique number
-      \param count the max size of output
+      \param did output for the generated  DomainIdentfier
+      \param count the amount of domain indentfier's
     */
-    void generateDomainIdentfier(uint32_t *output,int count);
+    void generateDomainIdentfier(uint32_t *did,int count);
 
 
     /*!

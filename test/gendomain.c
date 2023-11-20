@@ -35,14 +35,17 @@ int main(int argc, char *argv[]){
     struct SID *sid;
     initSID(&sid);
 
-    uint32_t ident[3];
+
 
     setAuthority(sid,NT);
 
     setSubAuthority(sid,21);
 
-    generateDomainIdentfier(ident,3);
-    setDomainIndentfier(sid,ident,3);
+    uint32_t did[3];
+
+    generateDomainIdentfier(did,3);
+
+    setDomainIndentfier(sid,did,3);
 
     setRid(sid,1001);
 

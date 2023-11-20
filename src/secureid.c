@@ -140,17 +140,22 @@ void setAuthority(struct SID *sid,Authority authority){
 
 void setSubAuthority(struct SID *sid,uint32_t uid){
     sid->SubAuthority[0]=uid;
+    sid->SubAuthorityCount=2;
 }
 
 void setDomainIndentfier(struct SID *sid,uint32_t* did,uint8_t count){
     if(sid->SubAuthorityCount!=0){
-        munmap(sid->SubAuthority[1],(sizeof(uint32_t)*sid->SubAuthorityCount));
+        munmap32(sid->SubAuthority[1],(sizeof(uint32_t)*sid->SubAuthorityCount));
     }
 
     if(sid->SubAuthority[0]==21){
         sid->SubAuthority[1]=map32(sizeof(uint32_t)*count);
-        memcpy32(sid->SubAuthority[1],did, (count * sizeof(uint32_t)));
-        sid->SubAuthorityCount=count;
+
+        for(uint32_t i=0; i<count; ++i){
+            sid->SubAuthority[i+1]=did[i];
+        }
+
+        sid->SubAuthorityCount=(count+2);
     }else{
         assert("only SubAuthority with value 21 supports domain indentfier !");
     }
@@ -233,15 +238,15 @@ int printSID(struct SID *sid,char *output,int size){
     return written;
 };
 
-void generateDomainIdentfier(uint32_t* output, int count){
+void generateDomainIdentfier(uint32_t *did, int count){
 
     FILE *devrandom;
 
     devrandom = fopen("/dev/random","r");
 
     for(int i=0; i<count; ++i){
-        for(char ii=0; ii<sizeof(uint32_t); ii=ii+sizeof(char)){
-            output[i] |= getc(devrandom);
+        while(did[i]< 1000000000){
+            did[i] = 1000000000 << fgetc(devrandom);
         }
     }
 
