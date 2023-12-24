@@ -7,11 +7,18 @@ add_library(secureid STATIC ${secureidsrc})
 install(
     TARGETS
         secureid
-    DESTINATION
-        lib
     EXPORT
         secureidTargets
+    LIBRARY DESTINATION
+        lib
+    ARCHIVE DESTINATION
+        lib
+    RUNTIME DESTINATION
+        bin
+    INCLUDES DESTINATION
+        include
 )
+
 
 install(
     FILES
