@@ -25,6 +25,8 @@ set_property(TARGET secureid PROPERTY SOVERSION ${LIBV})
 set_property(TARGET secureid PROPERTY INTERFACE_systempp_MAJOR_VERSION ${LIBV})
 set_property(TARGET secureid APPEND PROPERTY COMPATIBLE_INTERFACE_STRING cryptplus_MAJOR_VERSION)
 
+include(GenerateExportHeader)
+
 set(ConfigPackageLocation lib/cmake/libsecureid)
 
 export(EXPORT secureidTargets
