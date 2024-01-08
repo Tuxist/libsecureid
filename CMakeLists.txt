@@ -15,6 +15,10 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/src
 )
 
+if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
+    add_definitions(-DX86_64)
+endif()
+
 add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(doc)

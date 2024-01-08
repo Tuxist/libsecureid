@@ -49,7 +49,11 @@ __attribute__((visibility("hidden"))) uint32_t string2uint32_t(const char* str,i
 };
 
 __attribute__((visibility("hidden"))) uint32_t map32(uint32_t size){
+#ifdef X86_64
     return mmap(0,size,PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_32BIT, -1, 0);
+#else
+    return mmap(0,size,PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+#endif
 };
 
 __attribute__((visibility("hidden"))) uint32_t munmap32(void *ptr,uint32_t size){
