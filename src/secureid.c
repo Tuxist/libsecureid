@@ -54,7 +54,7 @@ __attribute__((visibility("hidden"))) uint32_t map32(uint32_t size){
 #endif
 
 #if defined(__LP64__) && !defined(__x86_64__)
-    return mmap(0,sizeof(uint32_t)*size, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED,-1, 0);
+    return mmap(0,(size/2), PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED,-1, 0);
 #endif
 };
 
