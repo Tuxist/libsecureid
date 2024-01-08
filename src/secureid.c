@@ -154,7 +154,7 @@ void setDomainIndentfier(struct SID *sid,uint32_t* did,uint8_t count){
     }
 
     if(sid->SubAuthority[0]==21){
-        sid->SubAuthority[1]=map32(sizeof(uint32_t)*count);
+        sid->SubAuthority[1]=map32(sid->SubAuthority[1],sizeof(uint32_t)*count);
 
         for(uint32_t i=0; i<count; ++i){
             sid->SubAuthority[i+1]=did[i];
@@ -193,7 +193,7 @@ int parseSID(struct SID *sid,const char *input,int size){
     if(sid->SubAuthorityCount==0)
         return 0;
 
-    sid->SubAuthority[1]=map32(sid->SubAuthorityCount*sizeof(uint32_t));
+    sid->SubAuthority[1]=map32(sid->SubAuthority[1],sid->SubAuthorityCount*sizeof(uint32_t));
 
     int iis,ia;
 
