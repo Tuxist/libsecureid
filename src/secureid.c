@@ -48,11 +48,11 @@ __attribute__((visibility("hidden"))) uint32_t string2uint32_t(const char* str,i
     return res;
 };
 
-__attribute__((visibility("hidden"))) uint32_t map32(void *ptr,uint32_t size){
+__attribute__((visibility("hidden"))) void * map32(uint32_t size){
 #ifdef MAP_32BIT
-    return mmap(ptr,size,PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_32BIT, -1, 0);
+    return mmap(0,size,PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_32BIT, -1, 0);
 #else
-    void *mem=mmap(ptr,size,PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED, -1, 0);
+    void *mem=mmap(0,size,PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED, -1, 0);
     return mem;
 #endif
 };
@@ -108,7 +108,7 @@ __attribute__((visibility("hidden"))) int uint32_t2string(uint32_t num,char* str
 }
 
 void initSID(struct SID **sid){
-    *sid=map32(sid,sizeof(struct SID));
+    *sid=map32(sizeof(struct SID));
     (*sid)->Revesion=1;
     (*sid)->SubAuthorityCount=1;
     setAuthority(*sid,NullAccount);
@@ -126,7 +126,7 @@ int SIDcpy(struct SID *dest,struct SID *src){
 
     int written=0;
 
-    dest->SubAuthority[1]=map32(dest->SubAuthorityCount,src->SubAuthorityCount*sizeof(uint32_t));
+    dest->SubAuthority[1]=map32(src->SubAuthorityCount*sizeof(uint32_t));
 
     for(int i=0; i<src->SubAuthorityCount; ++i){
         dest->SubAuthority[i]=src->SubAuthority[i];
@@ -154,7 +154,7 @@ void setDomainIndentfier(struct SID *sid,uint32_t* did,uint8_t count){
     }
 
     if(sid->SubAuthority[0]==21){
-        sid->SubAuthority[1]=map32(sid->SubAuthority[1],sizeof(uint32_t)*count);
+        sid->SubAuthority[1]=map32(sizeof(uint32_t)*count);
 
         for(uint32_t i=0; i<count; ++i){
             sid->SubAuthority[i+1]=did[i];
@@ -193,7 +193,7 @@ int parseSID(struct SID *sid,const char *input,int size){
     if(sid->SubAuthorityCount==0)
         return 0;
 
-    sid->SubAuthority[1]=map32(sid->SubAuthority[1],sid->SubAuthorityCount*sizeof(uint32_t));
+    sid->SubAuthority[1]=map32(sid->SubAuthorityCount*sizeof(uint32_t));
 
     int iis,ia;
 
