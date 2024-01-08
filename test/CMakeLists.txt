@@ -1,4 +1,7 @@
 add_executable(parse parse.c)
+
+if( $ENV{CMAKE_TEST} NOT STREQUAL "FALSE")
+
 target_link_libraries(parse secureid)
 
 add_test(NAME parse COMMAND $<TARGET_FILE:parse> "${CMAKE_SOURCE_DIR}/test/sid.txt")
@@ -17,3 +20,5 @@ add_executable(gendomain gendomain.c)
 target_link_libraries(gendomain secureid)
 
 add_test(NAME gendomain COMMAND $<TARGET_FILE:gendomain>)
+
+endif()
