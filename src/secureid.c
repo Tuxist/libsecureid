@@ -68,7 +68,7 @@ __attribute__((visibility("hidden"))) static inline uint64_t xoroshiro_rotl (con
     return (x << k) | (x >> (64 - k));
 }
 
-__attribute__((visibility("hidden"))) uint32_t map32(uint32_t sz){
+__attribute__((visibility("hidden"))) void* map32(uint32_t sz){
     unsigned char *cp;
     unsigned flags = MAP_PRIVATE | MAP_ANON;
     void *base_addr = NULL;
