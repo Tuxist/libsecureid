@@ -1,4 +1,4 @@
-if( NOT DEFINED $ENV{CMAKE_DISABLE_TESTS})
+if( NOT DEFINED ENV{CMAKE_DISABLE_TESTS})
 
 add_executable(parse parse.c)
 target_link_libraries(parse secureid)
