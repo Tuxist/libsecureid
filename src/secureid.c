@@ -126,7 +126,7 @@ int SIDcpy(struct SID *dest,struct SID *src){
 
     int written=0;
 
-    dest->SubAuthority[1]=map32(src->SubAuthorityCount*sizeof(uint32_t));
+    dest->SubAuthority[1]=map32(dest->SubAuthorityCount,src->SubAuthorityCount*sizeof(uint32_t));
 
     for(int i=0; i<src->SubAuthorityCount; ++i){
         dest->SubAuthority[i]=src->SubAuthority[i];
