@@ -25,7 +25,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
 
-#include "string.h"
 #include "assert.h"
 #include "stdio.h"
 
@@ -42,18 +41,6 @@ Authority NT              ={0,0,0,0,0,5};
 Authority ResourceManager ={0,0,0,0,0,6};
 Authority MandatoryLevel  ={0,0,0,0,1,6};
 
-#define MAX_PIECES (1u << 2u)
-
-struct poor_slab {
-    struct slab_piece {
-        unsigned char *ptr;
-        uint32_t sz;
-        uint32_t occupied;
-    } pieces[MAX_PIECES];
-};
-
- __attribute__((aligned(64))) struct poor_slab slabs;
-
 __attribute__((visibility("hidden"))) uint32_t string2uint32_t(const char* str,int size){
     uint32_t res = 0;
     for (int i = 0; i < size; ++i)
@@ -61,65 +48,13 @@ __attribute__((visibility("hidden"))) uint32_t string2uint32_t(const char* str,i
     return res;
 };
 
-__attribute__((visibility("hidden"))) static uint64_t xorshifto_seed[2] = {0xdeadbabe, 0xdeadbeef};
-
-
-__attribute__((visibility("hidden"))) static inline uint64_t xoroshiro_rotl (const uint64_t x, int k) {
-    return (x << k) | (x >> (64 - k));
-}
-
-__attribute__((visibility("hidden"))) void* map32(uint32_t sz){
-    unsigned char *cp;
-    unsigned flags = MAP_PRIVATE | MAP_ANON;
-    void *base_addr = NULL;
-
-    /* Check slabs */
-    for (unsigned i = 0; i < MAX_PIECES; i ++) {
-        if (!slabs.pieces[i].occupied && slabs.pieces[i].sz == sz) {
-            /* Reuse, short path */
-            slabs.pieces[i].occupied = 1;
-            return slabs.pieces[i].ptr + sizeof (size_t);
-        }
-    }
-
+__attribute__((visibility("hidden"))) uint32_t map32(void *ptr,uint32_t size){
 #ifdef MAP_32BIT
-    flags |= MAP_32BIT;
+    return mmap(ptr,size,PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_32BIT, -1, 0);
 #else
-    const uint64_t s0 = xorshifto_seed[0];
-    uint64_t s1 = xorshifto_seed[1];
-
-    s1 ^= s0;
-    xorshifto_seed[0] = xoroshiro_rotl (s0, 55) ^ s1 ^ (s1 << 14);
-    xorshifto_seed[1] = xoroshiro_rotl (s1, 36);
-    flags |= MAP_FIXED;
-    /* Get 46 bits */
-    base_addr = (void *)((xorshifto_seed[0] + xorshifto_seed[1]) & 0x7FFFFFFFF000ULL);
+    void *mem=mmap(ptr,size,PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED, -1, 0);
+    return mem;
 #endif
-
-    cp = mmap (base_addr, sz + sizeof (sz), PROT_WRITE | PROT_READ,
-               flags, -1, 0);
-    assert (cp != MAP_FAILED);
-    memcpy (cp, &sz, sizeof (sz));
-
-    for (unsigned i = 0; i < MAX_PIECES; i ++) {
-        if (slabs.pieces[i].occupied == 0) {
-            /* Store piece */
-            slabs.pieces[i].sz = sz;
-            slabs.pieces[i].ptr = cp;
-            slabs.pieces[i].occupied = 1;
-
-            return cp + sizeof (sz);
-        }
-    }
-
-    /* Not enough free pieces, pop some */
-    unsigned sel = ((uintptr_t)cp) & ((MAX_PIECES * 2) - 1);
-    /* Here we free memory in fact */
-    munmap (slabs.pieces[sel].ptr, slabs.pieces[sel].sz + sizeof (sz));
-    slabs.pieces[sel].sz = sz;
-    slabs.pieces[sel].ptr = cp;
-    slabs.pieces[sel].occupied = 1;
-    return cp + sizeof (sz);
 };
 
 __attribute__((visibility("hidden"))) uint32_t munmap32(void *ptr,uint32_t size){
@@ -173,7 +108,7 @@ __attribute__((visibility("hidden"))) int uint32_t2string(uint32_t num,char* str
 }
 
 void initSID(struct SID **sid){
-    *sid=map32(sizeof(struct SID));
+    *sid=map32(sid,sizeof(struct SID));
     (*sid)->Revesion=1;
     (*sid)->SubAuthorityCount=1;
     setAuthority(*sid,NullAccount);
