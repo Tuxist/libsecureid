@@ -52,8 +52,7 @@ __attribute__((visibility("hidden"))) void *map32(unsigned long int size){
 #ifdef MAP_32BIT
     return mmap(0,size,PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_32BIT, -1, 0);
 #else
-    uint32_t addr[size];
-    return mmap(addr[size],size,PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED, -1, 0);
+    return mmap((uint32_t)0,size,PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
 #endif
 };
 
