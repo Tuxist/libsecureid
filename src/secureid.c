@@ -48,11 +48,12 @@ __attribute__((visibility("hidden"))) uint32_t string2uint32_t(const char* str,i
     return res;
 };
 
-__attribute__((visibility("hidden"))) void * map32(uint32_t size){
+__attribute__((visibility("hidden"))) void *map32(unsigned long int size){
 #ifdef MAP_32BIT
     return mmap(0,size,PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_32BIT, -1, 0);
 #else
-    void *mem=mmap(0,size,PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED, -1, 0);
+    uint32_t addr;
+    uint32_t *mem=mmap(&addr,size,PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED, -1, 0);
     return mem;
 #endif
 };
@@ -63,7 +64,7 @@ __attribute__((visibility("hidden"))) uint32_t munmap32(void *ptr,uint32_t size)
 
 __attribute__((visibility("hidden"))) uint32_t memcpy32(void *dest,void *src,uint32_t size){
     uint32_t i;
-    for(i=0; i<size; ++i){
+    for(i=1; i<size; ++i){
         ((char*)dest)[i]=((char*)src)[i];
     }
     return dest;
