@@ -184,6 +184,8 @@ int parseSID(struct SID *sid,const char *input,int size){
 
     int c =i;
 
+    sid->SubAuthorityCount=0;
+
     while( c< size){
         if(input[c++]=='-')
             ++sid->SubAuthorityCount;
